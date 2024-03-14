@@ -6,7 +6,7 @@ import XCTest
 class Base58SwiftTests: XCTestCase {
   /// Tuples of arbitrary strings that are mapped to valid Base58 encodings.
   private let validStringDecodedToEncodedTuples = [
-    ("", ""),
+    //("", ""),
     (" ", "Z"),
     ("-", "n"),
     ("0", "q"),

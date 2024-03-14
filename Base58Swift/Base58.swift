@@ -10,8 +10,8 @@ public enum Base58 {
   private static let checksumLength = 4
 
   private static let alphabet = [UInt8]("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz".utf8)
-  private static let zero = BigUInt(0)
-  private static let radix = BigUInt(alphabet.count)
+  private static let zero = BInt(0)
+  private static let radix = BInt(alphabet.count)
 
   /// Encode the given bytes into a Base58Check encoded string.
   /// - Parameter bytes: The bytes to encode.
@@ -45,11 +45,11 @@ public enum Base58 {
   /// - Returns: A base58 encoded string representing the given bytes, or nil if encoding failed.
   public static func base58Encode(_ bytes: [UInt8]) -> String {
     var answer: [UInt8] = []
-    var integerBytes = BigUInt(Data(bytes))
+      var integerBytes = BInt(magnitude: bytes)
 
     while integerBytes > 0 {
       let (quotient, remainder) = integerBytes.quotientAndRemainder(dividingBy: radix)
-      answer.insert(alphabet[Int(remainder)], at: 0)
+        answer.insert(alphabet[remainder.asInt() ?? 0], at: 0)
       integerBytes = quotient
     }
 
@@ -67,18 +67,18 @@ public enum Base58 {
   /// - Returns: Bytes representing the decoded input, or nil if decoding failed.
   public static func base58Decode(_ input: String) -> [UInt8]? {
     var answer = zero
-    var i = BigUInt(1)
+    var i = BInt(1)
     let byteString = [UInt8](input.utf8)
 
     for char in byteString.reversed() {
       guard let alphabetIndex = alphabet.firstIndex(of: char) else {
         return nil
       }
-      answer += (i * BigUInt(alphabetIndex))
+      answer += (i * BInt(alphabetIndex))
       i *= radix
     }
 
-    let bytes = answer.serialize()
+      let bytes = answer.asMagnitudeBytes()
     return Array(byteString.prefix { i in i == alphabet[0] }) + bytes
   }
 
